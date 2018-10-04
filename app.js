@@ -56,7 +56,7 @@ function moveBook(e) {
       // Добавляем дочерний элемент к списку
       const li = document.createElement('li');
         li.className = 'collection-item';
-        li.innerHTML = `${bookName}
+        li.textContent = `${bookName}
           <a href="#" class="secondary-content">
             <i class="material-icons move right">Переместить</i>
           </a>
