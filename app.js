@@ -29,15 +29,21 @@ function addBook(e) {
   //Элемент с новой книгой
   const li = document.createElement('li');
   //Добавляем класс к элементу
-  li.className = 'collection-item';
-  //Добавляем содержимое
-  li.innerHTML = `${bookName}
-    <a href="#" class=secondary-content>
-    <i class="material-icons move right">Переместить</i></a>
-    <a href="#" class="secondary-content">
-    <i class="material-icons delete right">Удалить</i></a>`
-  // Добавляем дочерний элемент к списку
-  notReadedCol.appendChild(li);
+  if(bookName){
+    li.className = 'collection-item';
+    //Добавляем содержимое
+    li.innerHTML = `${bookName}
+      <a href="#" class=secondary-content>
+      <i class="material-icons move right">Переместить</i></a>
+      <a href="#" class="secondary-content">
+      <i class="material-icons delete right">Удалить</i></a>`
+    // Добавляем дочерний элемент к списку
+    notReadedCol.appendChild(li);
+  } else {
+    // добавить сообщение о необходимости заполнить поле
+    alert("Добавте название книги");
+  }
+
 }
 
 
