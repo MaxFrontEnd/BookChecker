@@ -8,6 +8,7 @@ const remove = document.querySelector('.delete');
 
 //евенты
 function addEvents(){
+  document.addEventListener('DOMContentLoaded', getBooksFromStorage);
   // Добавить книгу в непрочитанное
   addBookButton.addEventListener('click', addBook)
   //Книгу в прочитанное
@@ -15,6 +16,8 @@ function addEvents(){
   notReadedCol.addEventListener('click', deleteBook);
   //Книгу в не прочитанное
   readedCol.addEventListener('click', moveBook);
+
+
 }
 
 addEvents();
@@ -42,6 +45,7 @@ function addBook(e) {
     formHtml(li, bookName);
     // Добавляем дочерний элемент к списку
     notReadedCol.appendChild(li);
+    setBookToStorage(bookName);
     document.getElementById('book-name').value = '';
   } else {
     // добавить сообщение о необходимости заполнить поле
@@ -81,6 +85,40 @@ function deleteBook(e) {
   }
 }
 
-function getStorage() {
+//Добавляем книгу в локальное хранилище
+function setBookToStorage(book) {
+  let books;
+  if(localStorage.getItem('books') === null) {
+    books = [];
+  } else {
+    books = JSON.parse(localStorage.getItem('books'));
+  }
+  books.push(book);
+  localStorage.setItem('books', JSON.stringify(books));
+}
+
+function getBooksFromStorage() {
+  console.log("Зашли в функцию");
+  let books;
+  if(localStorage.getItem('books') === null) {
+    books = [];
+
+  } else {
+    books = JSON.parse(localStorage.getItem('books'));
+    console.log(books);
+    books.forEach(book => {
+      console.log(books);
+      //Элемент с новой книгой
+      const li = document.createElement('li');
+      //Добавляем класс к элементу
+        li.className = 'collection-item';
+        //Отображаем каждую книгу из списка книг
+        formHtml(li, book);
+        // Добавляем дочерний элемент к списку
+        notReadedCol.appendChild(li);
+        //setStorgae(bookName);
+    });
+    //console.log(books);
+  }
 
 }
