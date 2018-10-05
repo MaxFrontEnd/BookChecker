@@ -81,6 +81,10 @@ function moveBook(e) {
 function deleteBook(e) {
   //Проверяем есть ли класс у элемента по которому кликнули
   if(e.target.classList.contains('delete')){
+    const bookName = e.target.parentElement.
+    parentElement.childNodes[0].textContent.trim();
+    console.log(bookName);
+    removeBookFromStorage(bookName);
     e.target.parentElement.parentElement.remove();
   }
 }
@@ -98,16 +102,13 @@ function setBookToStorage(book) {
 }
 
 function getBooksFromStorage() {
-  console.log("Зашли в функцию");
   let books;
   if(localStorage.getItem('books') === null) {
     books = [];
 
   } else {
     books = JSON.parse(localStorage.getItem('books'));
-    console.log(books);
     books.forEach(book => {
-      console.log(books);
       //Элемент с новой книгой
       const li = document.createElement('li');
       //Добавляем класс к элементу
@@ -121,4 +122,17 @@ function getBooksFromStorage() {
     //console.log(books);
   }
 
+}
+
+// Удаляем из локального хранилища
+function removeBookFromStorage(removeBook) {
+  books = JSON.parse(localStorage.getItem('books'));
+  books.forEach((book, index) => {
+    console.log(book === removeBook);
+
+    if (book.trim() === removeBook.trim()) {
+      books.splice(index, 1);
+      localStorage.setItem('books', JSON.stringify(books));
+    }
+  });
 }
