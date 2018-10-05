@@ -36,6 +36,15 @@ function formHtml(element, name) {
     <a href="#" class="secondary-content">
     <i class="material-icons delete right">Удалить</i></a>`
 }
+// отображает статус при удалении или добавлении книги
+function statusDisplay(status, className) {
+  //const html = `<div class={$className}>{$status}</div>`;
+  const html = document.createElement('div');
+  html.classList = className;
+  const nav = document.querySelector('.teal');
+  const container = document.querySelector('.container');
+  
+}
 function addBook(e) {
   //Получаем значение из поля ввода
   const bookName = document.getElementById('book-name').value;
@@ -49,6 +58,7 @@ function addBook(e) {
     notReadedCol.appendChild(li);
     setBookToStorage(bookName);
     document.getElementById('book-name').value = '';
+    statusDisplay("Книга добавлена", 'positive-status');
   } else {
     // добавить сообщение о необходимости заполнить поле
     alert("Добавте название книги");
