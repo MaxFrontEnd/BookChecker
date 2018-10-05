@@ -9,6 +9,8 @@ const remove = document.querySelector('.delete');
 //евенты
 function addEvents(){
   document.addEventListener('DOMContentLoaded', getBooksFromStorage);
+  document.addEventListener('DOMContentLoaded', getReadedFromStorage);
+
   // Добавить книгу в непрочитанное
   addBookButton.addEventListener('click', addBook)
   //Книгу в прочитанное
@@ -67,10 +69,14 @@ function moveBook(e) {
         formHtml(li, bookName);
       if(ul.contains('not-readed')) {
             readedCol.appendChild(li);
+            setReadedToStorage(bookName);
+            removeBookFromStorage(bookName);
             document.querySelector('.delete').remove();
            }
       if (ul.contains('readed')) {
             notReadedCol.appendChild(li);
+            setBookToStorage(bookName);
+            removeReadedFromStorage(bookName);
       }
       e.target.parentElement.parentElement.remove();
 
@@ -83,9 +89,8 @@ function deleteBook(e) {
   if(e.target.classList.contains('delete')){
     const bookName = e.target.parentElement.
     parentElement.childNodes[0].textContent.trim();
-    console.log(bookName);
-    removeBookFromStorage(bookName);
     e.target.parentElement.parentElement.remove();
+    removeBookFromStorage(bookName);
   }
 }
 
@@ -97,8 +102,26 @@ function setBookToStorage(book) {
   } else {
     books = JSON.parse(localStorage.getItem('books'));
   }
-  books.push(book);
-  localStorage.setItem('books', JSON.stringify(books));
+  // если экземпляр уже есть, не добавляем новый
+  if(!books.includes(book.trim())){
+    books.push(book);
+    localStorage.setItem('books', JSON.stringify(books));
+  }
+}
+
+// Добавить книгу в хранилище прочитанных
+function setReadedToStorage(book) {
+  let readed;
+  if(localStorage.getItem('readed') === null) {
+    readed = [];
+  } else {
+    readed = JSON.parse(localStorage.getItem('readed'));
+  }
+  //Если книга есть то не создаем еще один экземпляр
+  if(!readed.includes(book.trim())){
+    readed.push(book);
+    localStorage.setItem('readed', JSON.stringify(readed));
+  }
 }
 
 function getBooksFromStorage() {
@@ -124,15 +147,48 @@ function getBooksFromStorage() {
 
 }
 
+function getReadedFromStorage() {
+  let readed;
+  if(localStorage.getItem('readed') === null) {
+    readed = [];
+
+  } else {
+    readed = JSON.parse(localStorage.getItem('readed'));
+    readed.forEach(book => {
+      //Элемент с новой книгой
+      const li = document.createElement('li');
+      //Добавляем класс к элементу
+        li.className = 'collection-item';
+        //Отображаем каждую книгу из списка книг
+        formHtml(li, book);
+        // Добавляем дочерний элемент к списку
+        readedCol.appendChild(li);
+        //setStorgae(bookName);
+        document.querySelector('.delete').remove();
+    });
+    //console.log(books);
+  }
+
+}
+
 // Удаляем из локального хранилища
 function removeBookFromStorage(removeBook) {
   books = JSON.parse(localStorage.getItem('books'));
   books.forEach((book, index) => {
-    console.log(book === removeBook);
-
     if (book.trim() === removeBook.trim()) {
       books.splice(index, 1);
       localStorage.setItem('books', JSON.stringify(books));
+    }
+  });
+}
+
+// Удаляем из локального хранилища
+function removeReadedFromStorage(removeBook) {
+  readed = JSON.parse(localStorage.getItem('readed'));
+  readed.forEach((book, index) => {
+    if (book.trim() === removeBook.trim()) {
+      readed.splice(index, 1);
+      localStorage.setItem('readed', JSON.stringify(readed));
     }
   });
 }
