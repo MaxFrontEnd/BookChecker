@@ -89,14 +89,14 @@ function moveBook(e) {
       if(ul.contains('not-readed')) {
             readedCol.appendChild(li);
             setReadedToStorage(bookName);
-            removeBookFromStorage(bookName);
+            removeBookFromStorage(bookName, 'books');
             document.querySelector('.delete').remove();
             statusDisplay('Книга добавлена в прочитанное');
            }
       if (ul.contains('readed')) {
             notReadedCol.appendChild(li);
             setBookToStorage(bookName);
-            removeReadedFromStorage(bookName);
+            removeBookFromStorage(bookName, 'readed');
             statusDisplay('Книга возвращена из прочитанного');
       }
       e.target.parentElement.parentElement.remove();
@@ -194,23 +194,12 @@ function getReadedFromStorage() {
 }
 
 // Удаляем из локального хранилища непрочитанные {рефакт}
-function removeBookFromStorage(removeBook) {
-  books = JSON.parse(localStorage.getItem('books'));
+function removeBookFromStorage(removeBook, storage) {
+  books = JSON.parse(localStorage.getItem(storage));
   books.forEach((book, index) => {
     if (book.trim() === removeBook.trim()) {
       books.splice(index, 1);
-      localStorage.setItem('books', JSON.stringify(books));
-    }
-  });
-}
-
-// Удаляем из локального хранилища прочитанные
-function removeReadedFromStorage(removeBook) {
-  readed = JSON.parse(localStorage.getItem('readed'));
-  readed.forEach((book, index) => {
-    if (book.trim() === removeBook.trim()) {
-      readed.splice(index, 1);
-      localStorage.setItem('readed', JSON.stringify(readed));
+      localStorage.setItem(storage, JSON.stringify(books));
     }
   });
 }
