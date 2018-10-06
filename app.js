@@ -72,9 +72,9 @@ function addBook(e) {
     // добавить сообщение о необходимости заполнить поле
     alert("Добавьте название книги");
   }
-
 }
 
+function arrayOfTitles();
 //Удаление книги из списка
 function moveBook(e) {
     //Проверяем есть ли класс у элемента по которому кликнули
@@ -117,18 +117,34 @@ function deleteBook(e) {
 
 //Добавляем книгу в локальное хранилище
 function setBookToStorage(book) {
+  exemplar = {};
   let books;
   if(localStorage.getItem('books') === null) {
     books = [];
+    exemplar.title = book;
+    books.push(exemplar);
+    localStorage.setItem('books', JSON.stringify(books));
   } else {
     books = JSON.parse(localStorage.getItem('books'));
   }
-  // если экземпляр уже есть, не добавляем новый
-  if(!books.includes(book.trim())){
-    books.push(book);
+  let arrOftitles = [];
+  books.forEach(exemplar => {
+    arrOftitles.push(exemplar.title);
+  });
+  if(!arrOftitles.includes(book)){
+    exemplar = {};
+    exemplar.title = book;
+    books.push(exemplar);
     localStorage.setItem('books', JSON.stringify(books));
   }
 }
+
+  // если экземпляр уже есть, не добавляем новый
+  // if(!books.includes(book.trim())){
+  //   books.push(book);
+  //   localStorage.setItem('books', JSON.stringify(books));
+  // }
+
 
 // Добавить книгу в хранилище прочитанных
 function setReadedToStorage(book) {
@@ -192,14 +208,14 @@ function getReadedFromStorage() {
   }
 
 }
-
-// Удаляем из локального хранилища непрочитанные {рефакт}
-function removeBookFromStorage(removeBook, storage) {
-  books = JSON.parse(localStorage.getItem(storage));
-  books.forEach((book, index) => {
-    if (book.trim() === removeBook.trim()) {
-      books.splice(index, 1);
-      localStorage.setItem(storage, JSON.stringify(books));
-    }
-  });
-}
+//
+// // Удаляем из локального хранилища непрочитанные {рефакт}
+// function removeBookFromStorage(removeBook, storage) {
+//   books = JSON.parse(localStorage.getItem(storage));
+//   books.forEach((book, index) => {
+//     if (book.trim() === removeBook.trim()) {
+//       books.splice(index, 1);
+//       localStorage.setItem(storage, JSON.stringify(books));
+//     }
+//   });
+// }
