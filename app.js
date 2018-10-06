@@ -5,6 +5,7 @@ const notReadedCol = document.querySelector('.not-readed');
 const move = document.querySelector('.move');
 const addBookButton = document.getElementById('add-book');
 const remove = document.querySelector('.delete');
+const statusRow = document.querySelector('.status');
 
 //евенты
 function addEvents(){
@@ -36,6 +37,23 @@ function formHtml(element, name) {
     <a href="#" class="secondary-content">
     <i class="material-icons delete right">Удалить</i></a>`
 }
+// отображает статус при удалении или добавлении книги
+function statusDisplay(status) {
+  const html = document.createElement('span');
+  const text = document.createTextNode(status);
+  html.appendChild(text);
+  // Не добавлять елемент, елси уже есть такой
+  if(!statusRow.innerText){
+    statusRow.appendChild(html);
+  }
+    setTimeout(() => {
+
+      html.remove();
+    }, 3000);
+
+
+
+}
 function addBook(e) {
   //Получаем значение из поля ввода
   const bookName = document.getElementById('book-name').value;
@@ -49,9 +67,10 @@ function addBook(e) {
     notReadedCol.appendChild(li);
     setBookToStorage(bookName);
     document.getElementById('book-name').value = '';
+    statusDisplay("Книга добавлена");
   } else {
     // добавить сообщение о необходимости заполнить поле
-    alert("Добавте название книги");
+    alert("Добавьте название книги");
   }
 
 }
@@ -72,11 +91,13 @@ function moveBook(e) {
             setReadedToStorage(bookName);
             removeBookFromStorage(bookName);
             document.querySelector('.delete').remove();
+            statusDisplay('Книга добавлена в прочитанное');
            }
       if (ul.contains('readed')) {
             notReadedCol.appendChild(li);
             setBookToStorage(bookName);
             removeReadedFromStorage(bookName);
+            statusDisplay('Книга возвращена из прочитанного');
       }
       e.target.parentElement.parentElement.remove();
 
@@ -124,6 +145,7 @@ function setReadedToStorage(book) {
   }
 }
 
+// Забрать из хранилища непрочитанные (рефакт)
 function getBooksFromStorage() {
   let books;
   if(localStorage.getItem('books') === null) {
@@ -146,7 +168,7 @@ function getBooksFromStorage() {
   }
 
 }
-
+ // Забрать из локального хранилища прочитанные книги
 function getReadedFromStorage() {
   let readed;
   if(localStorage.getItem('readed') === null) {
@@ -171,7 +193,7 @@ function getReadedFromStorage() {
 
 }
 
-// Удаляем из локального хранилища
+// Удаляем из локального хранилища непрочитанные {рефакт}
 function removeBookFromStorage(removeBook) {
   books = JSON.parse(localStorage.getItem('books'));
   books.forEach((book, index) => {
@@ -182,7 +204,7 @@ function removeBookFromStorage(removeBook) {
   });
 }
 
-// Удаляем из локального хранилища
+// Удаляем из локального хранилища прочитанные
 function removeReadedFromStorage(removeBook) {
   readed = JSON.parse(localStorage.getItem('readed'));
   readed.forEach((book, index) => {
