@@ -60,7 +60,14 @@ function addBook(e) {
   //Элемент с новой книгой
   const li = document.createElement('li');
   //Добавляем класс к элементу
-  if(bookName) {
+  books = JSON.parse(localStorage.getItem('books'));
+  const arr = getArrayOfTitles(books);
+  // Проверяем есть ли такая книга в списке
+  if(arr.includes(bookName)) {
+    statusDisplay("Такая книга уже есть");
+  }
+  // Eще проверяем введено ли название книги
+  else if(bookName){
     li.className = 'collection-item';
     formHtml(li, bookName);
     // Добавляем дочерний элемент к списку
@@ -74,7 +81,6 @@ function addBook(e) {
   }
 }
 
-function arrayOfTitles();
 //Удаление книги из списка
 function moveBook(e) {
     //Проверяем есть ли класс у элемента по которому кликнули
@@ -111,54 +117,43 @@ function deleteBook(e) {
     const bookName = e.target.parentElement.
     parentElement.childNodes[0].textContent.trim();
     e.target.parentElement.parentElement.remove();
-    removeBookFromStorage(bookName);
+    removeBookFromStorage(bookName, 'books');
   }
 }
 
 //Добавляем книгу в локальное хранилище
 function setBookToStorage(book) {
-  exemplar = {};
   let books;
   if(localStorage.getItem('books') === null) {
     books = [];
-    exemplar.title = book;
-    books.push(exemplar);
+    exemplar = {};
     localStorage.setItem('books', JSON.stringify(books));
   } else {
     books = JSON.parse(localStorage.getItem('books'));
   }
-  let arrOftitles = [];
-  books.forEach(exemplar => {
-    arrOftitles.push(exemplar.title);
-  });
+  arrOftitles = getArrayOfTitles(books);
   if(!arrOftitles.includes(book)){
-    exemplar = {};
-    exemplar.title = book;
-    books.push(exemplar);
+    books = createExemplar(books, book);
     localStorage.setItem('books', JSON.stringify(books));
   }
 }
-
-  // если экземпляр уже есть, не добавляем новый
-  // if(!books.includes(book.trim())){
-  //   books.push(book);
-  //   localStorage.setItem('books', JSON.stringify(books));
-  // }
-
 
 // Добавить книгу в хранилище прочитанных
 function setReadedToStorage(book) {
   let readed;
   if(localStorage.getItem('readed') === null) {
     readed = [];
+    readed = createExemplar(readed, book);
   } else {
     readed = JSON.parse(localStorage.getItem('readed'));
+    titles = getArrayOfTitles(readed);
+    exists = checkIfExist(titles, book);
+    if(!checkIfExist(titles, book)) {
+      readed = createExemplar(readed, book);
+    }
   }
   //Если книга есть то не создаем еще один экземпляр
-  if(!readed.includes(book.trim())){
-    readed.push(book);
-    localStorage.setItem('readed', JSON.stringify(readed));
-  }
+  localStorage.setItem('readed', JSON.stringify(readed));
 }
 
 // Забрать из хранилища непрочитанные (рефакт)
@@ -169,13 +164,13 @@ function getBooksFromStorage() {
 
   } else {
     books = JSON.parse(localStorage.getItem('books'));
-    books.forEach(book => {
+    books.forEach(obj => {
       //Элемент с новой книгой
       const li = document.createElement('li');
       //Добавляем класс к элементу
         li.className = 'collection-item';
         //Отображаем каждую книгу из списка книг
-        formHtml(li, book);
+        formHtml(li, obj.title);
         // Добавляем дочерний элемент к списку
         notReadedCol.appendChild(li);
         //setStorgae(bookName);
@@ -192,13 +187,13 @@ function getReadedFromStorage() {
 
   } else {
     readed = JSON.parse(localStorage.getItem('readed'));
-    readed.forEach(book => {
+    readed.forEach(obj => {
       //Элемент с новой книгой
       const li = document.createElement('li');
       //Добавляем класс к элементу
         li.className = 'collection-item';
         //Отображаем каждую книгу из списка книг
-        formHtml(li, book);
+        formHtml(li, obj.title);
         // Добавляем дочерний элемент к списку
         readedCol.appendChild(li);
         //setStorgae(bookName);
@@ -208,14 +203,38 @@ function getReadedFromStorage() {
   }
 
 }
-//
-// // Удаляем из локального хранилища непрочитанные {рефакт}
-// function removeBookFromStorage(removeBook, storage) {
-//   books = JSON.parse(localStorage.getItem(storage));
-//   books.forEach((book, index) => {
-//     if (book.trim() === removeBook.trim()) {
-//       books.splice(index, 1);
-//       localStorage.setItem(storage, JSON.stringify(books));
-//     }
-//   });
-// }
+
+
+// Удаляем из локального хранилища
+function removeBookFromStorage(removeBook, storage) {
+  books = JSON.parse(localStorage.getItem(storage));
+  books.forEach((obj, index) => {
+    if (obj.title.trim() === removeBook.trim()) {
+      books.splice(index, 1);
+      localStorage.setItem(storage, JSON.stringify(books));
+    }
+  });
+}
+
+function getArrayOfTitles(storage) {
+  let arrOftitles = [];
+  if(storage) {
+    storage.forEach(exemplar => {
+      arrOftitles.push(exemplar.title);
+    });
+  }
+  return arrOftitles;
+}
+
+function createExemplar(arr, book) {
+   exemplar = {};
+   exemplar.title = book;
+   arr.push(exemplar);
+   return arr;
+ }
+
+function checkIfExist(arr, book) {
+  if(arr.includes(book.trim())){
+    return true;
+  }
+}
